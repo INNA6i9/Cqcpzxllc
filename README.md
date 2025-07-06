@@ -40,3 +40,182 @@
 
 <button onclick="sendSMS('+8801581811797', 'Hello from Jervis!')">📩 Send SMS</button>
 <button onclick="makeCall('+8801994027116')">📞 Make Call</button>
+
+css>{body {
+    font-family: 'Arial', sans-serif;
+    background-color: #0a0a0a;
+    color: #00ffcc;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: #111;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00ffcc;
+}
+
+h1 {
+    font-size: 28px;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #aaa;
+}
+
+.chat-box {
+    border: 2px solid #00ffcc;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    background: #222;
+}
+
+#chat-log {
+    height: 150px;
+    overflow-y: auto;
+    background: #111;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: left;
+    color: #00ffcc;
+}
+
+input, button {
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+}
+
+input {
+    width: 70%;
+    background: #222;
+    color: #00ffcc;
+}
+
+button {
+    background: #00ffcc;
+    color: #111;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #008f7a;
+}
+
+.controls {
+    margin-top: 20px;
+}
+
+JavaScript>{document.addEventListener("DOMContentLoaded", () => {
+    addMessage("Jervis: Hello! How can I assist you?");
+});
+
+function sendMessage() {
+    let inputField = document.getElementById("user-input");
+    let message = inputField.value.trim();
+    if (message === "") return;
+
+    addMessage(`You: ${message}`);
+    processJervisResponse(message.toLowerCase());
+
+    inputField.value = "";
+}
+
+function handleKeyPress(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
+}
+
+function processJervisResponse(input) {
+    let response = "Jervis: Sorry, I didn't get that.";
+
+    if (input.includes("weather")) {
+        getWeather();
+        response = "Jervis: Fetching the latest weather...";
+    } else if (input.includes("time")) {
+        getTime();
+        return;
+    } else if (input.includes("hello")) {
+        response = "Jervis: Greetings! How can I help you today?";
+    } else if (input.includes("thanks")) {
+        response = "Jervis: You're welcome! Stay awesome.";
+    }
+
+    setTimeout(() => {
+        addMessage(response);
+        speak(response);
+    }, 500);
+}
+
+function addMessage(message) {
+    let chatLog = document.getElementById("chat-log");
+    let newMessage = document.createElement("p");
+    newMessage.innerHTML = message;
+    chatLog.appendChild(newMessage);
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+function speak(text) {
+    let speech = new SpeechSynthesisUtterance(text);
+    speech.voice = window.speechSynthesis.getVoices().find(voice => voice.name.includes("Google UK English Female")) || null;
+    speech.pitch = 1.2;
+    speech.rate = 1;
+    window.speechSynthesis.speak(speech);
+}
+
+function getWeather() {
+    fetch("https://api.openweathermap.org/data/2.5/weather?q=New York&appid=YOUR_API_KEY&units=metric")
+        .then(response => response.json())
+        .then(data => {
+            let weather = `Jervis: The weather in ${data.name} is ${data.weather[0].description} with a temperature of ${data.main.temp}°C.`;
+            addMessage(weather);
+            speak(weather);
+        })
+        .catch(() => {
+            addMessage("Jervis: Unable to fetch weather.");
+            speak("Jervis: Unable to fetch weather.");
+        });
+}
+
+function getTime() {
+    let now = new Date();
+    let time = `Jervis: The current time is ${now.getHours()}:${now.getMinutes()}.`;
+    addMessage(time);
+    speak(time);
+}
+async function makeCall(toNumber) {
+    const accountSid = "YOUR_TWILIO_SID";
+    const authToken = "YOUR_TWILIO_AUTH_TOKEN";
+    const twilioNumber = "YOUR_TWILIO_PHONE";
+
+    const response = await fetch("https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Calls.json", {
+        method: "POST",
+        headers: {
+            "Authorization": "Basic " + btoa(accountSid + ":" + authToken),
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+            "From": twilioNumber,
+            "To": toNumber,
+            "Url": "http://demo.twilio.com/docs/voice.xml" // Replace with your TwiML Bin URL for custom voice messages
+        })
+    });
+
+    if (response.ok) {
+        alert("Call initiated successfully!");
+    } else {
+        alert("Failed to make a call.");
+    }
+}
+
+Cqcpzxllc YIIB6I9 
