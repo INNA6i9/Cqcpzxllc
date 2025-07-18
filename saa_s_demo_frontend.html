@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YIIB6I9 - AI SaaS Assistant</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #333;
+    }
+    header {
+      background: #0d0d2b;
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+    }
+    nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+    }
+    .hero {
+      background: linear-gradient(to right, #1d2671, #c33764);
+      color: white;
+      padding: 100px 20px;
+      text-align: center;
+    }
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 40px 20px;
+      background: white;
+    }
+    .feature-card {
+      background: #f9f9f9;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin: 15px;
+      padding: 20px;
+      width: 280px;
+      text-align: center;
+    }
+    footer {
+      background: #0d0d2b;
+      color: white;
+      text-align: center;
+      padding: 30px;
+      margin-top: 40px;
+    }
+    button {
+      background: #ff4d4d;
+      border: none;
+      padding: 12px 25px;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #e60000;
+    }
+    .auth-box, .question-box, .public-feed {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .auth-box input, .question-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body>
+  <header>
+    <h1>🪐 YIIB6I9</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#features">Features</a>
+      <a href="#login">Login</a>
+      <a href="#signup">Sign Up</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>AI Assistant at Your Service</h2>
+    <p>Ask any question and get instant answers with voice.</p>
+    <button onclick="startTrial()">Start Free Trial</button>
+  </section>
+
+  <section class="features" id="features">
+    <div class="feature-card">
+      <h3>🔊 Voice Answers</h3>
+      <p>Real-time robotic answers to any question.</p>
+    </div>
+    <div class="feature-card">
+      <h3>🧠 AI Powered</h3>
+      <p>Google Gemini API integration for smart responses.</p>
+    </div>
+    <div class="feature-card">
+      <h3>🔒 Auth System</h3>
+      <p>Secure Sign In/Sign Up with Supabase.</p>
+    </div>
+    <div class="feature-card">
+      <h3>💳 Payment Ready</h3>
+      <p>Stripe/bKash payments integration placeholder.</p>
+    </div>
+    <div class="feature-card">
+      <h3>🌐 Live Public Feed</h3>
+      <p>Recent public questions and answers update instantly.</p>
+    </div>
+  </section>
+
+  <section class="auth-box" id="login">
+    <h2>Login</h2>
+    <input type="email" id="login-email" placeholder="Email">
+    <input type="password" id="login-password" placeholder="Password">
+    <button onclick="loginUser()">Login</button>
+  </section>
+
+  <section class="auth-box" id="signup">
+    <h2>Sign Up</h2>
+    <input type="email" id="signup-email" placeholder="Email">
+    <input type="password" id="signup-password" placeholder="Password">
+    <button onclick="signupUser()">Create Account</button>
+  </section>
+
+  <section class="question-box">
+    <h2>Ask a Question</h2>
+    <input type="text" id="question" placeholder="What is Quantum Computing?">
+    <button onclick="askQuestion()">Ask</button>
+    <p id="answer" style="margin-top: 20px;"></p>
+  </section>
+
+  <section class="public-feed">
+    <h2>🔄 Live Public Q&A</h2>
+    <ul id="feed"></ul>
+  </section>
+
+  <footer>
+    &copy; 2025 YIIB6I9. Built with ❤️ for the future.
+  </footer>
+
+  <script>
+    const supabase = window.supabase.createClient('https://your-project.supabase.co', 'your-anon-key');
+
+    function startTrial() {
+      alert("Trial started! Features unlocked.");
+    }
+
+    async function signupUser() {
+      const email = document.getElementById("signup-email").value;
+      const password = document.getElementById("signup-password").value;
+      const { error } = await supabase.auth.signUp({ email, password });
+      alert(error ? error.message : "Signup successful! Check email.");
+    }
+
+    async function loginUser() {
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      alert(error ? error.message : "Login successful!");
+    }
+
+    async function askQuestion() {
+      const question = document.getElementById("question").value;
+      const answerBox = document.getElementById("answer");
+      answerBox.innerText = "Answering...";
+
+      try {
+        const prompt = `Answer this question: ${question}`;
+        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=YOUR_GEMINI_API_KEY", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
+
+        if (!response.ok) throw new Error("API request failed");
+
+        const data = await response.json();
+        const aiAnswer = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No answer found.";
+        answerBox.innerText = aiAnswer;
+
+        const speech = new SpeechSynthesisUtterance(aiAnswer);
+        speech.rate = 0.9;
+        window.speechSynthesis.speak(speech);
+
+        await supabase.from("public_questions").insert([{ question, answer: aiAnswer }]);
+        fetchFeed();
+      } catch (err) {
+        answerBox.innerText = "Failed to fetch answer.";
+        console.error(err);
+      }
+    }
+
+    async function fetchFeed() {
+      const { data, error } = await supabase.from("public_questions").select("*").order("created_at", { ascending: false });
+      const list = document.getElementById("feed");
+      list.innerHTML = "";
+      if (data) {
+        data.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `Q: ${item.question} → A: ${item.answer}`;
+          list.appendChild(li);
+        });
+      }
+    }
+
+    fetchFeed();
+  </script>
+</body>
+</html>
